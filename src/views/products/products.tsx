@@ -17,20 +17,17 @@ export const Products: React.FC = () => {
     paginatedItems: paginatedProducts,
     handlePageChange,
   } = usePagination({ items: PRODUCTS_DATA, itemsPerPage: 5 });
-
  
   const handleOpenModal = useCallback((product: Product) => {
     setSelectedProduct(product);
     window.history.pushState({ modalOpen: true }, "", `#${product.id}`);
   }, []);
-
   
   const handleCloseModal = useCallback(() => {
     setSelectedProduct(null);
     window.history.pushState({ modalOpen: false }, "", "/products");
   }, []);
 
-  
   useEffect(() => {
     const syncModalWithHash = () => {
       const modalId = window.location.hash.replace("#", "");
@@ -44,9 +41,7 @@ export const Products: React.FC = () => {
       }
     };
 
-
     syncModalWithHash();
-
 
     window.addEventListener("popstate", syncModalWithHash);
     return () => {
