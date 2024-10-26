@@ -1,7 +1,7 @@
 // src/app/layout.tsx
 import "./globals.css";
 import { UserAgentProvider } from "@/components/providers/userAgentProvider";
-import { UserAgent } from "@/views/userAgent/index";
+// import { UserAgent } from "@/views/userAgent/index";
 import { ReactNode } from "react";
 import { headers } from "next/headers"; 
 
@@ -9,7 +9,7 @@ const Layout = ({ children, userAgent }: { children: ReactNode; userAgent: strin
   return (
     <UserAgentProvider userAgent={userAgent}>
       {children}
-      <UserAgent userAgent={userAgent} />
+      {/* <UserAgent userAgent={userAgent} /> */}
     </UserAgentProvider>
   );
 };
