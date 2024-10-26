@@ -1,17 +1,34 @@
-import { UserAgentProvider } from "../components/providers/userAgentProvider";
+// src/app/layout.tsx
 import "./globals.css";
-import { Layout } from "@/components/layout";
+import { UserAgentProvider } from "@/components/providers/userAgentProvider";
+import { UserAgent } from "@/views/userAgent/index";
+import { ReactNode } from "react";
+import { headers } from "next/headers"; 
 
-const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const Layout = ({ children, userAgent }: { children: ReactNode; userAgent: string | undefined }) => {
   return (
-    <html lang="en">
-      <body>
-        <UserAgentProvider>
-          <Layout>{children}</Layout>
-        </UserAgentProvider>
-      </body>
-    </html>
+    <UserAgentProvider userAgent={userAgent}>
+      {children}
+      <UserAgent userAgent={userAgent} />
+    </UserAgentProvider>
   );
 };
 
-export default RootLayout;
+
+export const metadata = {
+  title: 'Your App Title',
+  description: 'Your App Description',
+};
+
+export default async function RootLayout({ children }: { children: ReactNode }) {
+ 
+  const userAgent = headers().get('user-agent') || "No user agent";
+
+  return (
+    <html lang="en">
+      <body>
+        <Layout userAgent={userAgent}>{children}</Layout>
+      </body>
+    </html>
+  );
+}
