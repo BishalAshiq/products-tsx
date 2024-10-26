@@ -17,25 +17,22 @@ export const Products: React.FC = () => {
     paginatedItems: paginatedProducts,
     handlePageChange,
   } = usePagination({ items: PRODUCTS_DATA, itemsPerPage: 5 });
-
-  // Open modal and update URL hash with product ID
+ 
   const handleOpenModal = useCallback((product: Product) => {
     setSelectedProduct(product);
     window.history.pushState({ modalOpen: true }, "", `#${product.id}`);
   }, []);
-
-  // Close modal and reset URL hash
+  
   const handleCloseModal = useCallback(() => {
     setSelectedProduct(null);
     window.history.pushState({ modalOpen: false }, "", "/products");
   }, []);
 
-  // Synchronize modal state with URL hash on initial load and URL changes
   useEffect(() => {
     const syncModalWithHash = () => {
       const modalId = window.location.hash.replace("#", "");
       if (modalId) {
-        const product = PRODUCTS_DATA.find((p) => p.id === modalId); // Compare as strings
+        const product = PRODUCTS_DATA.find((p) => p.id === modalId); 
         if (product) {
           setSelectedProduct(product);
         }
@@ -44,10 +41,8 @@ export const Products: React.FC = () => {
       }
     };
 
-    // Sync modal with URL hash on load
     syncModalWithHash();
 
-    // Sync modal with URL hash on back/forward navigation
     window.addEventListener("popstate", syncModalWithHash);
     return () => {
       window.removeEventListener("popstate", syncModalWithHash);
