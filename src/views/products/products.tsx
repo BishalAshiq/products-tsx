@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Product } from "@/types";
 import { ProductList } from "@/views/products/productList/productList";
@@ -11,7 +10,7 @@ import { ProductModal } from "@/views/products/productModal/productModal";
 
 export const Products: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  
+
   const {
     currentPage,
     totalPages,
@@ -19,50 +18,39 @@ export const Products: React.FC = () => {
     handlePageChange,
   } = usePagination({ items: PRODUCTS_DATA, itemsPerPage: 5 });
 
-
+  // Open modal and update URL hash with product ID
   const handleOpenModal = useCallback((product: Product) => {
     setSelectedProduct(product);
-    window.history.pushState(null, "", `#${product.id}`); 
+    window.history.pushState({ modalOpen: true }, "", `#${product.id}`);
   }, []);
 
- 
+  // Close modal and reset URL hash
   const handleCloseModal = useCallback(() => {
     setSelectedProduct(null);
-    window.history.pushState(null, "", "/products"); 
+    window.history.pushState({ modalOpen: false }, "", "/products");
   }, []);
 
- 
+  // Synchronize modal state with URL hash on initial load and URL changes
   useEffect(() => {
-    const modalId = window.location.hash.replace("#", ""); 
-    if (modalId) {
-      const productId = Number(modalId);
-      const product = PRODUCTS_DATA.find((p) => p.id === productId);
-      if (product) {
-        setSelectedProduct(product); 
-      }
-    }
-  }, []); 
-
- 
-  useEffect(() => {
-    const handlePopState = () => {
-      const modalId = window.location.hash.replace("#", ""); 
+    const syncModalWithHash = () => {
+      const modalId = window.location.hash.replace("#", "");
       if (modalId) {
-        const productId = Number(modalId);
-        const product = PRODUCTS_DATA.find((p) => p.id === productId);
+        const product = PRODUCTS_DATA.find((p) => p.id === modalId); // Compare as strings
         if (product) {
-          setSelectedProduct(product); 
-        } else {
-          setSelectedProduct(null); 
+          setSelectedProduct(product);
         }
       } else {
-        setSelectedProduct(null); 
+        setSelectedProduct(null);
       }
     };
 
-    window.addEventListener("popstate", handlePopState);
+    // Sync modal with URL hash on load
+    syncModalWithHash();
+
+    // Sync modal with URL hash on back/forward navigation
+    window.addEventListener("popstate", syncModalWithHash);
     return () => {
-      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("popstate", syncModalWithHash);
     };
   }, []);
 
